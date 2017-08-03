@@ -1,0 +1,243 @@
+-- "Человеческие" пути
+with recursive path (id, label) as (
+select t1.id, '/' || t1.label::text as path
+from jiresourcefolder t1
+where parent_folder = 7	-- root
+
+union
+
+select t2.id, path.label || '/' || t2.label
+from jiresourcefolder t2
+join path on path.id = t2.parent_folder
+)
+
+-- Русские имена отчетов
+,reports_ru_name as (
+select
+  jifol.uri || '/' || jires.name as addr,
+  jires.label,
+  jires.parent_folder,
+  jires.id as res_id
+from jiresource jires
+join jiresourcefolder jifol on jires.parent_folder = jifol.id
+  and resourcetype = 'com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit'
+)
+
+,days as (
+select '2' as key, 'Понедельник' as value union
+select '3', 'Вторник' union
+select '4','Среда' union
+select '5','Четверг' union
+select '6','Пятница' union
+select '7','Суббота' union
+select '1','Воскресенье'
+)
+
+,schdl as (
+select 'ao-cor@ntk.novotelecom.ru' as rs_mail
+union select 'billingmaster@ntk.novotelecom.ru'
+union select  'branch@ntk.novotelecom.ru'
+union select 'cc@ntk.novotelecom.ru'
+union select 'chief_of_techsupport@ntk.novotelecom.ru'
+union select 'corenet@novotelecom.ru'
+union select 'cor-sale@ntk.novotelecom.ru'
+union select 'disp-ofsupport@ntk.novotelecom.ru'
+union select 'expertsgm@ntk.novotelecom.ru'
+union select 'gra@novotelecom.ru'
+union select 'gra_stat_challenge@ntk.novotelecom.ru'
+union select 'iss_repeated_calls@novotelecom.ru'
+union select 'jo_adult_channels@novotelecom.ru'
+union select 'jo_akb_by_nnet@ntk.novotelecom.ru'
+union select 'jo_akb_by_tarif@ntk.novotelecom.ru'
+union select 'jo_akb_change@ntk.novotelecom.ru'
+union select 'jo_akb_service_my_account@ntk.novotelecom.ru'
+union select 'jo_all_intercom_reports@novotelecom.ru'
+union select 'jo_all_vk_detail_monthly@ntk.novotelecom.ru'
+union select 'jo_ams_monitoring@novotelecom.ru'
+union select 'jo_ao_completed@ntk.novotelecom.ru'
+union select 'jo_ao_diagnosis_monthly@ntk.novotelecom.ru'
+union select 'jo_ao_diagnosis@ntk.novotelecom.ru'
+union select 'jo_ao_fl_2_td@ntk.novotelecom.ru'
+union select 'jo_ao@ntk.novotelecom.ru'
+union select 'jo_ao_perenos_td@ntk.novotelecom.ru'
+union select 'jo_AO_requests_correct@ntk.novotelecom.ru'
+union select 'jo_ao_tikets_control_weekly@ntk.novotelecom.ru'
+union select 'jo_ApplicationKonstruktor@ntk.novotelecom.ru'
+union select 'jo_arpu_by_territory@novotelecom.ru'
+union select 'jo_audit_month_hard_block@novotelecom.ru'
+union select 'jo_audit_month_user_block@novotelecom.ru'
+union select 'jo_audit_zp_po_fl@novotelecom.ru'
+union select 'jo_bugs_domofon@ntk.novotelecom.ru'
+union select 'jo_bugs_domofon_reference@ntk.novotelecom.ru'
+union select 'jo_callcenter_StatIVR@novotelecom.ru'
+union select 'jo_callcenter_SumOperISS@novotelecom.ru'
+union select 'jo_closed_ticket_not_activated@ntk.novotelecom.ru'
+union select 'jo_control_1connection@ntk.novotelecom.ru'
+union select 'jo_current_block_state_d@novotelecom.ru'
+union select 'jo_current_block_state@novotelecom.ru'
+union select 'jo_data_yk@ntk.novotelecom.ru'
+union select 'jo_debt_leasing_monthly@ntk.novotelecom.ru'
+union select 'jo_dissolution_office@novotelecom.ru'
+union select 'jo_domostroy_nnet_monthly@ntk.novotelecom.ru'
+union select 'jo_equipment_ISS@ntk.novotelecom.ru'
+union select 'jo_forgotten_se@ntk.novotelecom.ru'
+union select 'jo_forpost_ca_visits@novotelecom.ru'
+union select 'jo_fu_ostatki_lc@novotelecom.ru'
+union select 'jo_heap_ao@ntk.novotelecom.ru'
+union select 'jo_intercom_ab_control@ntk.novotelecom.ru'
+union select 'jo_intercom_sales@novotelecom.ru'
+union select 'jo_issue_and_rating@ntk.novotelecom.ru'
+union select 'jo_iterative_accidents_on_a4@novotelecom.ru'
+union select 'jo_joule_otp_daily@ntk.novotelecom.ru'
+union select 'jo_ko_equipment_monthly@novotelecom.ru'
+union select 'jo_ko_equipment@novotelecom.ru'
+union select 'jo_ko_pre_data@ntk.novotelecom.ru'
+union select 'jo_kpd_DelayBidKPD@novotelecom.ru'
+union select 'jo_ktv_debet_nnet@ntk.novotelecom.ru'
+union select 'jo_maintenance_report@ntk.novotelecom.ru'
+union select 'jo_map_po_oxrana@novotelecom.ru'
+union select 'jo_modernizationandconstruction_daily@ntk.novotelecom.ru'
+union select 'jo_modernizationandconstruction_monthly@ntk.novotelecom.ru'
+union select 'jo_monthlyblocked_A4@novotelecom.ru'
+union select 'jo_numbers_capacity@ntk.novotelecom.ru'
+union select 'jo_oc_Connection@novotelecom.ru'
+union select 'jo_ochered@ntk.novotelecom.ru'
+union select 'jo_omspd_charging_maintainers@novotelecom.ru'
+union select 'jo_omspd_network_continuity@novotelecom.ru'
+union select 'jo_omspd_response_time@novotelecom.ru'
+union select 'jo_or_bugs_dostyp_vk_daily@ntk.novotelecom.ru'
+union select 'jo_or_my_accounts@ntk.novotelecom.ru'
+union select 'jo_problem_with_a4@novotelecom.ru'
+union select 'jo_promised_payments@ntk.novotelecom.ru'
+union select 'jo_reason_for_rejection@ntk.novotelecom.ru'
+union select 'jo_repeated_failures_a4@novotelecom.ru'
+union select 'jo_report_contr_devices@ntk.novotelecom.ru'
+union select 'jo_report_dtn_control@ntk.novotelecom.ru'
+union select 'jo_report_robot_blockedmonthly_ao@ntk.novotelecom.ru'
+union select 'jo_request_sales_office_manager@ntk.novotelecom.ru'
+union select 'jo_sc_docs@novotelecom.ru'
+union select 'jo_security_sales@novotelecom.ru'
+union select 'jo_security_state_td@ntk.novotelecom.ru'
+union select 'jo_skachok_termon@ntk.novotelecom.ru'
+union select 'jo_sla_ye@ntk.novotelecom.ru'
+union select 'jo_stornirovanie@novotelecom.ru'
+union select 'jo_stornirovanie@ntk.novotelecom.ru'
+union select 'jo_su_op_queue@novotelecom.ru'
+union select 'jo_su_op_timeinrepairabnconzp@novotelecom.ru'
+union select 'jo_tp_cam@ntk.novotelecom.ru'
+union select 'jo_tv_packets_flow@novotelecom.ru'
+union select 'jo_ulactivateop@ntk.novotelecom.ru'
+union select 'jo_ul_connect@novotelecom.ru'
+union select 'jo_ul_profit@novotelecom.ru'
+union select 'jo_ul_stp_opir_ue@novotelecom.ru'
+union select 'jo_upa_iss_countersivr@novotelecom.ru'
+union select 'jo_up_all_ur_m@novotelecom.ru'
+union select 'jo_upa_techsup_requests_m@novotelecom.ru'
+union select 'jo_upa_techsup_requests_w@novotelecom.ru'
+union select 'jo_up_equipment_new@ntk.novotelecom.ru'
+union select 'jo_up_ostatki_ur@novotelecom.ru'
+union select 'jo_up_viruchka_ur_2_month@novotelecom.ru'
+union select 'jo_UTPA_tickets@ntk.novotelecom.ru'
+union select 'jo_video@ntk.novotelecom.ru'
+union select 'jo_video_weekly@ntk.novotelecom.ru'
+union select 'jo_worklengeneer_norm@ntk.novotelecom.ru'
+union select 'jo_zp_otp@ntk.novotelecom.ru'
+union select 'kap_centre@ntk.novotelecom.ru'
+union select 'kap_vostok@ntk.novotelecom.ru'
+union select 'noc@ntk.novotelecom.ru'
+union select 'opir-left@ntk.novotelecom.ru'
+union select 'opir-south@ntk.novotelecom.ru'
+union select 'pm@novotelecom.ru'
+union select 'pto@ntk.novotelecom.ru'
+union select 'report_manager@novotelecom.ru'
+union select 'rukao@ntk.novotelecom.ru'
+union select 'rukAO@ntk.novotelecom.ru'
+union select 'ruk_group_domostroy@novotelecom.ru'
+union select 'staroff@ntk.novotelecom.ru'
+union select 'stp_ruk@ntk.novotelecom.ru'
+union select 'switch-a4@novotelecom.ru'
+union select 'techsupport@novotelecom.ru'
+union select 'ue_control_change_details@novotelecom.ru'
+union select 'uko@ntk.novotelecom.ru'
+union select 'upa_kpd_disp_response_time@ntk.novotelecom.ru'
+union select 'upa_ue_impact@ntk.novotelecom.ru'
+union select 'upa_work_assigment@ntk.novotelecom.ru'
+union select 'zam-opir@ntk.novotelecom.ru'
+)
+
+
+
+, ddd as (
+
+select
+  path.label as folder,
+  a.label as rep_name,
+  a.res_id,
+  jjob.id as job_id,
+  jjob.label as job_name,
+  string_agg(distinct jmr.address, E'\n')  as address,
+  jjob.base_output_name as file_name,
+  jct.hours || ':' || jct.minutes as job_time,
+  case when jct.days_type = 1 then 'каждый день'
+       when jct.days_type = 2 then (select string_agg(d.value, E'\n')
+                                    from (select regexp_split_to_table(jct.week_days, ',') as p) a
+                                    left join days d on d.key = a.p)
+       when jct.days_type = 3 then jct.month_days || ' дни месяца'
+       else null end as job_days,
+  case when jct.months = '1,2,3,4,5,6,7,8,9,10,11,12' then 'каждый месяц'
+       else jct.months || ' месяцы'end as job_months,
+  date_trunc( 'minute',max(event_date)) as max_date,
+  regexp_replace(string_agg(jiu.username, ' ' order by event_date),'^.* ', '')  as  max_user,
+  jrjm.subject as mail_subject
+
+from reports_ru_name a
+join path on path.id = a.parent_folder
+left join jireportjob jjob on a.addr = jjob.report_unit_uri
+left join jireportjobmailrecipient jmr on jmr.destination_id = jjob.mail_notification
+left join jireportjobmail jrjm on jrjm.id = jjob.mail_notification
+left join jireportjobcalendartrigger jct on jct.id = jjob.job_trigger
+left join jiaccessevent jae on jae.resource_id = a.res_id
+  and jae.updating is false
+  and jae.user_id != 12984155
+left join jiuser jiu on jiu.id = jae.user_id
+WHERE jjob.id IS NOT null
+/*where (jjob.id = $P{job_id} or $P{job_id} is null)
+  and (jrjm.subject ilike '%' || $P{mail_subject} || '%' or $P{mail_subject} is null)
+  and (a.label ilike '%' || $P{report_name} || '%' or $P{report_name} is null)
+  and (jjob.base_output_name ilike '%' || $P{file_name} || '%' or $P{file_name} is null)
+  and case when $P{no_archive} then path.label not ilike '/_Архив%' else true end*/
+group by folder, rep_name, res_id, job_id,
+  job_name, file_name, jct.hours, jct.minutes,
+  days_type, jct.week_days, jct.month_days, jct.months, jrjm.subject
+--having string_agg(distinct jmr.address, E'\n') ilike '%' || $P{mail} || '%' or $P{mail} is null
+order by case when path.label ilike '/_Архив%' then 'a1'
+              when path.label ilike '/export%' then 'a2'
+              else path.label end, rep_name, job_id
+
+)
+
+--,sss as (
+--select rep_name, count(distinct address) from ddd where address is not null group by rep_name order by 2 desc
+select distinct rep_name, address, length(address) - length(replace(address, '@', '')) as rrs
+
+from ddd 
+
+where rep_name in (
+select rep_name
+from ddd 
+where address is not null 
+group by rep_name
+--having count(distinct address) =1
+)
+--and length(address) - length(replace(address, '@', '')) = 1
+order by 1,3
+
+/*)
+
+select distinct folder, rep_name, address 
+from ddd 
+where rep_name in (select rep_name from sss group by rep_name having count(rep_name) = 1)
+and address is not null
+order by 1,2
+
+--select * from ddd where rep_name = 'Баги синхронизации eva'
